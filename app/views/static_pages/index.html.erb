@@ -1,0 +1,24 @@
+<h1 class="display-4 my-4">React Stockcharts</h1>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Chart</h5>
+    <%= react_component('charts/Stocks', {
+      entry_level:      @entry_level,
+      exit_level:       @exit_level,
+      entry_timestamp:  @entry_timestamp,
+      exit_timestamp:   @exit_timestamp,
+      stop_loss_level:  @stop_loss_level,
+      buy_sell:         @buy_sell,
+      indicators:       @indicators,
+      chart_data:       @chart_data
+    }) %>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-body">
+    <h5 class="card-title">Raw data</h5>
+    <%= @data %>
+  </div>
+</div>
