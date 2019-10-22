@@ -6,7 +6,13 @@ import moment from 'moment'
 
 import { PriceCoordinate } from 'react-stockcharts/lib/coordinates'
 import { TypeChooser } from 'react-stockcharts/lib/helper'
-import { LabelAnnotation, Label, Annotate } from 'react-stockcharts/lib/annotation'
+import {
+	buyPath,
+	sellPath,
+	Label,
+	SvgPathAnnotation,
+	Annotate
+} from 'react-stockcharts/lib/annotation'
 import { ChartCanvas, Chart } from 'react-stockcharts'
 import {
 	BarSeries,
@@ -212,26 +218,16 @@ class Stocks extends React.Component {
 		const xExtents = [start, end]
 
 		const entryAnnotationProps = {
-			fontSize: 9,
-			fill: 'darkgreen',
-			text: 'Entry',
-			rotate: -90,
-			y: ({ yScale }) => {
-				return yScale.range()[0]
-			},
-			// onClick: console.log.bind(console),
-			tooltip: d => timeFormat('%d %B')(d.date)
-			// onMouseOver: console.log.bind(console),
+			fill: '#006517',
+			path: sellPath,
+			y: ({ yScale }) => yScale(+this.props.entry_level),
+			tooltip: d => 'Entry Level ' + timeFormat('%d %B')(d.date)
 		}
 		const exitAnnotationProps = {
-			fontSize: 9,
-			fill: 'tomato',
-			text: 'Exit',
-			rotate: -90,
-			y: ({ yScale }) => yScale.range()[0],
-			// onClick: console.log.bind(console),
-			tooltip: d => timeFormat('%d %B')(d.date)
-			// onMouseOver: console.log.bind(console),
+			fill: '#FF0000',
+			path: buyPath,
+			y: ({ yScale }) => yScale(+this.props.exit_level),
+			tooltip: d => 'Exit Level ' + timeFormat('%d %B')(d.date)
 		}
 
 		return (
@@ -306,7 +302,7 @@ class Stocks extends React.Component {
 
 						<OHLCTooltip origin={[-40, 0]} />
 						<Annotate
-							with={LabelAnnotation}
+							with={SvgPathAnnotation}
 							when={d => {
 								return (
 									timeFormat('%Y-%m-%d')(d.date) ===
@@ -316,7 +312,7 @@ class Stocks extends React.Component {
 							usingProps={entryAnnotationProps}
 						/>
 						<Annotate
-							with={LabelAnnotation}
+							with={SvgPathAnnotation}
 							when={d => {
 								return (
 									timeFormat('%Y-%m-%d')(d.date) ===
