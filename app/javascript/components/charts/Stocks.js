@@ -42,6 +42,11 @@ import {
 	RSITooltip,
 	SingleValueTooltip
 } from 'react-stockcharts/lib/tooltip'
+/* 
+	Step 1: Confirm that props(or api response) have that indicator with the value of true/false.
+	That is required! Using that property a checkbox will be automatically generated to enable of disable it.
+*/
+// Step 2: import the indicator
 import { ema, wma, rsi, sma, atr, tma, macd, bollingerBand } from 'react-stockcharts/lib/indicator'
 import { fitWidth } from 'react-stockcharts/lib/helper'
 import { last } from 'react-stockcharts/lib/utils'
@@ -93,7 +98,7 @@ class Stocks extends React.Component {
 				<span style={{ fontSize: 14, fontWeight: 'bold', marginLeft: 4 }}>{x}</span>
 			</label>
 		))
-
+		// Step 3: Add a function for accessor
 		const bb = bollingerBand()
 			.merge((d, c) => {
 				d.bb = c
@@ -174,6 +179,7 @@ class Stocks extends React.Component {
 			}
 		})
 		const movingAverageTooltip = []
+		// Step 4: Push the conf for indicator tooltip
 		this.state['8ema'] &&
 			movingAverageTooltip.push({
 				yAccessor: ema8.accessor(),
@@ -207,6 +213,7 @@ class Stocks extends React.Component {
 				echo: 'some echo here'
 			})
 
+		// Step 5: Add that accessor calculator function here
 		const calculatedData = ema8(
 			ema21(tma20(ema50(smaVolume50(macdCalculator(rsiCalculator(atr14(bb(initialData))))))))
 		)
@@ -284,6 +291,7 @@ class Stocks extends React.Component {
 						<MouseCoordinateY at='right' orient='right' displayFormat={format('.2f')} />
 
 						<CandlestickSeries />
+						{/* Step 6: Conditionally add Series for indicator like below */}
 						{this.state['20tma'] && (
 							<LineSeries yAccessor={tma20.accessor()} stroke={tma20.stroke()} />
 						)}
@@ -300,6 +308,7 @@ class Stocks extends React.Component {
 							<BollingerSeries yAccessor={d => d.bb} stroke={bbStroke} fill={bbFill} />
 						)}
 
+						{/* Step 7: Conditionally add CurrentCoordinate for indicator like below */}
 						{this.state['20tma'] && (
 							<CurrentCoordinate yAccessor={tma20.accessor()} fill={tma20.stroke()} />
 						)}
