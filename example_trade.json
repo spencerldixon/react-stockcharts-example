@@ -13,7 +13,8 @@
     "bb": true,
     "rsi": false,
     "atr": false,
-    "20tma": false
+    "20tma": false,
+    "volume": false
   },
   "chart_data": [
     {
