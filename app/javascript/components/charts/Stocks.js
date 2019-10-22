@@ -230,16 +230,29 @@ class Stocks extends React.Component {
 			tooltip: d => 'Exit Level ' + timeFormat('%d %B')(d.date)
 		}
 
+		/* For UI adjustment */
+		const spacePerChart = 200
+		const activeCharts = Object.keys(this.props.indicators).filter(
+			x => this.state[x] && (x === 'macd' || x === 'rsi' || x === 'atr' || x === 'volume')
+		).length
+		const totalCanvasHeight = 350 + activeCharts * spacePerChart
+
+		const heightOf1stChart = 300 // First Chart Height, Other will start from the bottom of it
+		const originHeight2ndChart = 350 // Volume Chart
+		const originHeight3rdChart = this.state['volume'] ? 350 + 200 : 350 // MACD
+		const originHeight4thChart =
+			this.state['volume'] && this.state['macd']
+				? 350 + 400
+				: this.state['volume'] || this.state['macd']
+				? 350 + 200
+				: 350 // RSI
+		const originHeight5thChart = totalCanvasHeight - 200
+
 		return (
 			<>
 				{indicatorControllers}
 				<ChartCanvas
-					height={
-						1300
-						// Object.keys(this.props.indicators).filter(
-						//   x => this.state[x] && (x === 'macd' || x === 'rsi' || x === 'atr' || x === 'volume')
-						// ).length * 350
-					}
+					height={totalCanvasHeight}
 					width={width}
 					ratio={ratio}
 					margin={{ left: 70, right: 70, top: 10, bottom: 30 }}
@@ -253,7 +266,7 @@ class Stocks extends React.Component {
 				>
 					<Chart
 						id={1}
-						height={300}
+						height={heightOf1stChart}
 						yExtents={[
 							d => [d.high, d.low],
 							tma20.accessor(),
@@ -353,7 +366,7 @@ class Stocks extends React.Component {
 							id={2}
 							yExtents={[d => d.volume, smaVolume50.accessor()]}
 							height={150}
-							origin={(w, h) => [0, h - 900]}
+							origin={(w, h) => [0, originHeight2ndChart]}
 						>
 							<YAxis axisAt='left' orient='left' ticks={5} tickFormat={format('.2s')} />
 
@@ -382,7 +395,7 @@ class Stocks extends React.Component {
 							id={3}
 							height={150}
 							yExtents={macdCalculator.accessor()}
-							origin={(w, h) => [0, h - 700]}
+							origin={(w, h) => [0, originHeight3rdChart]}
 							padding={{ top: 10, bottom: 10 }}
 						>
 							<XAxis axisAt='bottom' orient='bottom' />
@@ -412,7 +425,12 @@ class Stocks extends React.Component {
 						</Chart>
 					)}
 					{this.state['rsi'] && (
-						<Chart id={4} yExtents={[0, 100]} height={150} origin={(w, h) => [0, h - 200]}>
+						<Chart
+							id={4}
+							yExtents={[0, 100]}
+							height={150}
+							origin={(w, h) => [0, originHeight4thChart]}
+						>
 							<XAxis axisAt='bottom' orient='bottom' showTicks={false} outerTickSize={0} />
 							<YAxis axisAt='right' orient='right' tickValues={[30, 50, 70]} />
 							<MouseCoordinateY at='right' orient='right' displayFormat={format('.2f')} />
@@ -431,7 +449,7 @@ class Stocks extends React.Component {
 							id={5}
 							yExtents={atr14.accessor()}
 							height={150}
-							origin={(w, h) => [0, h - 400]}
+							origin={(w, h) => [0, originHeight5thChart]}
 							padding={{ top: 10, bottom: 10 }}
 						>
 							<XAxis axisAt='bottom' orient='bottom' />
